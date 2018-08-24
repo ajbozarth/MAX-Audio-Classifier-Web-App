@@ -52,3 +52,7 @@ body {
   background-color: #1E8B87;
   border-color: #2D8B89;
 }
+
+#audio-player {
+  margin-top: 15px;
+}

@@ -23,13 +23,24 @@
 $(function() {
 
   // File upload form submit functionality
-  $('#file-upload').on('submit', function(event){
+  $('#file-upload').on('submit', function(event) {
     // Stop form from submitting normally
     event.preventDefault();
 
-    // Get form data
+    // Get file form data
     var form = event.target;
+    var file = form[0].files[0];
     var data = new FormData(form);
+
+    // Display audio player for uploaded file on UI
+    var reader = new FileReader();
+    reader.onload = function(event) {
+      var file_url = event.target.result;
+      $('#input-audio').attr('src', file_url);
+      $('#audio-player').show();
+      $('#json-output').empty();
+    };
+    reader.readAsDataURL(file);
 
     if ($('#file-input').val() !== '') {
       $('#file-submit').text('Predicting...');
