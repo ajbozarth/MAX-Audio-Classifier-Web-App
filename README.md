@@ -20,6 +20,10 @@ This will pull a pre-built image from Docker Hub (or use an existing image if al
 If you'd rather build and run the model locally, or deploy on a Kubernetes cluster, you can follow the steps in the
 [model README](https://github.com/IBM/MAX-Audio-Classifier/#steps).
 
+### Install dependencies
+
+This app requires [ffmpeg](https://www.ffmpeg.org) to be installed locally in order to run.
+
 ### Start the Web App
 
 #### 1. Get a local copy of the repository
