@@ -18,11 +18,15 @@
   "homepage": "https://github.com/ajbozarth/MAX-Audio-Classifier-Web-App#readme",
   "dependencies": {
     "express": "^4.16.3",
+    "fluent-ffmpeg": "^2.1.2",
+    "form-data": "^2.3.2",
+    "formidable": "^1.2.1",
+    "fs": "0.0.1-security",
     "request": "^2.87.0",
     "yargs": "^11.0.0"
   },
   "devDependencies": {
-    "eslint": "^5.0.1",
+    "eslint": "^5.4.0",
     "eslint-config-strongloop": "^2.1.0"
   }
 }

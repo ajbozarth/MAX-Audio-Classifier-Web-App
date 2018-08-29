@@ -55,15 +55,21 @@ limitations under the License.
             </div>
 
             <div class="panel-body">
+
               <form id="file-upload" enctype="multipart/form-data">
                 <div class="form-group">
                   <input id="file-input" type="file" name="audio" accept=".wav, .mp3" />
                 </div>
                 <button id="file-submit" type="submit" class="btn btn-primary">Submit</button>
               </form>
-              <div id="audio-player" style="display:none">
-                <audio id="input-audio" controls></audio>
-              </div>
+
+              <form id="clip-upload">
+                <div id="audio-player" style="display:none">
+                  <audio id="input-audio" controls></audio>
+                  <button id="file-send" class="btn btn-primary" type="submit" style="float:right">Send</button>
+                </div>
+              </form>
+
             </div>
 
           </div>

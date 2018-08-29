@@ -19,6 +19,10 @@
 var request = require('request');
 var yargs = require('yargs');
 var express = require('express');
+var formidable = require('formidable');
+var ffmpeg = require('fluent-ffmpeg');
+var FormData = require('form-data');
+var fs = require('fs');
 
 var args = yargs
   .default('port', 8092)
@@ -30,7 +34,28 @@ var app = express();
 app.use(express.static('static'));
 
 app.all('/model/:route', function(req, res) {
+  console.log('Sending request to model API...')
   req.pipe(request(args.model + req.path)).pipe(res);
+});
+
+app.post("/upload", (req, res) => {
+  var form = new formidable.IncomingForm();
+  var file_path = '';
+  form.parse(req, function(err, fields, files) {
+    file_path = files.audio.path;
+    console.log('File path: ' + file_path);
+    console.log('Timestamp: ' + fields.time);
+    ffmpeg(file_path)
+      .setStartTime(fields.time)
+      .setDuration('10')
+      .on('end', function(stdout, stderr) {
+        var formData = { audio: fs.createReadStream(file_path + '_clip.wav') };
+        console.log('Sending request to model API...');
+        request.post({url: args.model + '/model/predict', formData: formData}).pipe(res);
+      })
+      .save(file_path + '_clip.wav');
+  });
+
 });
 
 app.listen(args.port);
