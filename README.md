@@ -66,5 +66,10 @@ If you want to use a different port or are running the model API at a different 
 $ node app --port=[new port] --model=[endpoint url including protocol and port]
 ```
 
+# Links
+
+* [Model Asset eXchange (MAX)](https://developer.ibm.com/code/exchanges/models/)
+* [Center for Open-Source Data & AI Technologies (CODAIT)](https://developer.ibm.com/code/open/centers/codait/)
+
 # License
 [Apache 2.0](LICENSE)

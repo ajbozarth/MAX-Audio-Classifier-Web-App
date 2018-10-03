@@ -38,24 +38,26 @@ app.all('/model/:route', function(req, res) {
   req.pipe(request(args.model + req.path)).pipe(res);
 });
 
-app.post("/upload", (req, res) => {
+app.post("/upload", function(req, res) {
   var form = new formidable.IncomingForm();
   var file_path = '';
   form.parse(req, function(err, fields, files) {
     file_path = files.audio.path;
     console.log('File path: ' + file_path);
     console.log('Timestamp: ' + fields.time);
-    ffmpeg(file_path)
-      .setStartTime(fields.time)
-      .setDuration('10')
-      .on('end', function(stdout, stderr) {
-        var formData = { audio: fs.createReadStream(file_path + '_clip.wav') };
+    if (file_path.contains('.mp3')) {
+      new_path = file_path.slice(0, -4);
+      ffmpeg(file_path).on('end', function(stdout, stderr) {
+        var formData = { audio: fs.createReadStream(new_path) };
         console.log('Sending request to model API...');
-        request.post({url: args.model + '/model/predict', formData: formData}).pipe(res);
-      })
-      .save(file_path + '_clip.wav');
+        request.post({url: args.model + '/model/predict?start_time=' + fields.time, formData: formData}).pipe(res);
+      }).save(new_path);
+    } else {
+      var formData = { audio: fs.createReadStream(file_path) };
+      console.log('Sending request to model API...');
+      request.post({url: args.model + '/model/predict?start_time=' + fields.time, formData: formData}).pipe(res);
+    }
   });
-
 });
 
 app.listen(args.port);
