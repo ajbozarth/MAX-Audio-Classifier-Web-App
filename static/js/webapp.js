@@ -40,6 +40,7 @@ $(function() {
       var file_url = event.target.result;
       $('#input-audio').attr('src', file_url);
       $('#audio-player').show();
+      $('#run-button').show();
       $('#json-output').empty();
     };
     reader.readAsDataURL(file);
@@ -48,6 +49,7 @@ $(function() {
       $('#file-submit').text('Predicting...');
       $('#file-submit').prop('disabled', true);
       $('#file-send').prop('disabled', true);
+      $('#file-run').prop('disabled', true);
 
       // Perform file upload
       $.ajax({
@@ -63,13 +65,14 @@ $(function() {
           current_file = file;
         },
         error: function(jqXHR, status, error) {
-          alert('Prediction Failed: ' + error);
+          alert('Prediction Failed: ' + jqXHR.responseText);
         },
         complete: function() {
           $('#file-submit').text('Submit');
           $('#file-input').val('');
           $('#file-submit').prop('disabled', false);
           $('#file-send').prop('disabled', false);
+          $('#file-run').prop('disabled', false);
         },
       });
     }
@@ -86,6 +89,7 @@ $(function() {
       $('#file-send').text('...');
       $('#file-submit').prop('disabled', true);
       $('#file-send').prop('disabled', true);
+      $('#file-run').prop('disabled', true);
 
       // Get file form data
       var data = new FormData();
@@ -105,15 +109,56 @@ $(function() {
           $('#json-output').html(output);
         },
         error: function(jqXHR, status, error) {
-          alert('Prediction Failed: ' + error);
+          alert('Prediction Failed: ' + jqXHR.responseText);
         },
         complete: function() {
           $('#file-send').text('Send');
           $('#file-submit').prop('disabled', false);
           $('#file-send').prop('disabled', false);
+          $('#file-run').prop('disabled', false);
         },
       });
     }
   });
+
+  $('#run-all').on('submit', function(event) {
+    // Stop form from submitting normally
+    event.preventDefault();
+
+    if (current_file) {
+      $('#file-run').text('...');
+      $('#file-submit').prop('disabled', true);
+      $('#file-send').prop('disabled', true);
+      $('#file-run').prop('disabled', true);
+
+      // Get file form data
+      var data = new FormData();
+      data.append('audio', current_file);
+
+      // Perform file upload
+      $.ajax({
+        url: '/run',
+        method: 'post',
+        processData: false,
+        contentType: false,
+        data: data,
+        dataType: 'json',
+        success: function(data) {
+          var output = JSON.stringify(data, null, 2);
+          $('#json-output').html(output);
+        },
+        error: function(jqXHR, status, error) {
+          alert('Prediction Failed: ' + jqXHR.responseText);
+        },
+        complete: function() {
+          $('#file-run').text('Run');
+          $('#file-submit').prop('disabled', false);
+          $('#file-send').prop('disabled', false);
+          $('#file-run').prop('disabled', false);
+        },
+      });
+    }
+  });
+
 
 });
