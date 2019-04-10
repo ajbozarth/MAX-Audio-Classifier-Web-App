@@ -21,7 +21,7 @@ var yargs = require('yargs');
 var express = require('express');
 var formidable = require('formidable');
 var ffmpeg = require('fluent-ffmpeg');
-var FormData = require('form-data');
+// var FormData = require('form-data');
 var fs = require('fs');
 
 var args = yargs
@@ -52,10 +52,10 @@ app.all('/model/:route', function(req, res) {
     .pipe(res);
 });
 
-app.post("/upload", function(req, res) {
+app.post('/upload', function(req, res) {
   var form = new formidable.IncomingForm();
   var file_path = '';
-  form.parse(req, function(err, fields, files) {
+  form.parse(req, function(_err, fields, files) {
     file_path = files.audio.path;
     var new_path = file_path + '_clip.wav';
     if (files.audio.name.includes('.mp3')) {
@@ -63,7 +63,7 @@ app.post("/upload", function(req, res) {
         model_request(new_path, fields.time).pipe(res);
       }).save(new_path);
     } else {
-      fs.copyFileSync(file_path, new_path, () => {});
+      fs.copyFileSync(file_path, new_path, function() {});
       model_request(new_path, fields.time).pipe(res);
     }
   });
@@ -72,14 +72,13 @@ app.post("/upload", function(req, res) {
 // Iterative global variables for running a file through the model in chunks
 var run_results = {};
 var run_time = 0;
-var run_file = "";
+var run_file = '';
 var run_res;
 
 function process_run() {
-  for (var time_stamp in run_results) {
-    var preds = run_results[time_stamp];
-
-  }
+  // for (var time_stamp in run_results) {
+  //    var preds = run_results[time_stamp];
+  // }
 }
 
 function run_request() {
@@ -95,7 +94,7 @@ function run_request() {
         return;
       }
       var jsonResp = JSON.parse(body);
-      if (httpResp.statusCode == 200 && jsonResp['status'] == 'ok') {
+      if (httpResp.statusCode === 200 && jsonResp['status'] === 'ok') {
         run_results[run_time] = jsonResp['predictions'];
         run_time += 10;
         run_request();
@@ -106,13 +105,13 @@ function run_request() {
     });
 }
 
-app.post("/run", function(req, res) {
+app.post('/run', function(req, res) {
   run_results = {};
   run_time = 0;
   var form = new formidable.IncomingForm();
-  form.parse(req, function(err, fields, files) {
+  form.parse(req, function(_err, fields, files) {
     run_file = files.audio.path + '_clip.wav';
-    fs.copyFileSync(files.audio.path, run_file, () => {});
+    fs.copyFileSync(files.audio.path, run_file, function() {});
     console.log('File path: ' + run_file);
     run_res = res;
     run_request();
